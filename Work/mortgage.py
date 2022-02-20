@@ -21,5 +21,4 @@ while principal > 0:
     if principal <= 0:
         total_paid = total_paid + principal
         principal = 0
-        print(f"Last payment month: {months}")
-    print(months, total_paid, principal)
+print(f"Total months: {months}, Total Paid: ${total_paid:,.2f}, Remaning Principal: ${principal:,.2f}")
