@@ -2,18 +2,23 @@
 #
 # Exercise 2.4
 import csv
+import sys
 
 def read_portfolio(filename):
     plist = []
     f = open(filename)
     rows = csv.reader(f)
-    header = next(rows)
-    for row in rows:
+    headers = next(rows)
+    for i, row in enumerate(rows):
+        print(row)
+        record = dict(zip(headers, row))
+        print(record)
         try:
-            plist.append({'name': row[0], 'shares': int(row[1]), 'price': float(row[2])})
+            plist.append(record)
         except Exception as e:
-            print(e)
-    f.close
+            print(f"Error in line {i}")
+    f.close()
+    print(plist)
     return plist
 
 def read_prices(filename):
@@ -33,14 +38,14 @@ def make_report(portfolio, prices):
     headers = ('Name', 'Shares', 'Price', 'Change')
     print('%10s %10s %10s %10s' % headers)
     print(('_' * 10 + ' ') * len(headers))
-    report = [(el['name'], el['shares'], prices[el['name']], (el['shares'] * el['price']) - (el['shares'] * prices[el['name']])) for el in portfolio]
+    report = [(el['name'], int(el['shares']), float(prices[el['name']]), (int(el['shares']) * float(el['price'])) - (int(el['shares']) * float(prices[el['name']]))) for el in portfolio]
     for name, shares, price, change in report:
         price = f"${price:0.2f}"
         print(f'{name:>10s} {shares:>10d} {price:>10s} {change:>10.2f}')
     return report
 
 def get_portfolio_value():
-    portfolio = read_portfolio('Data/portfolio.csv')
+    portfolio = read_portfolio(filename)
     prices = read_prices('Data/prices.csv')
     pval = 0.0
     for el in portfolio:
@@ -56,6 +61,12 @@ def get_portfolio_value():
     else:
         print(f"Portfolio valued at ${new_val:,.2f} for a loss of -${abs(new_val - pval):,.2f}")
 
-portfolio = read_portfolio('Data/portfolio.csv')
+
+if len(sys.argv) == 2:
+    filename = sys.argv[1]
+else:
+    filename = 'Data/portfolio.csv'
+
+portfolio = read_portfolio(filename)
 prices = read_prices('Data/prices.csv')
 report = make_report(portfolio, prices)
