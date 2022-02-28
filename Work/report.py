@@ -10,11 +10,14 @@ def read_portfolio(filename):
     rows = csv.reader(f)
     headers = next(rows)
     for i, row in enumerate(rows):
-        print(row)
         record = dict(zip(headers, row))
-        print(record)
+        stock = {
+            'name'   : record['name'],
+            'shares' : int(record['shares']),
+            'price'   : float(record['price'])
+        }
         try:
-            plist.append(record)
+            plist.append(stock)
         except Exception as e:
             print(f"Error in line {i}")
     f.close()
