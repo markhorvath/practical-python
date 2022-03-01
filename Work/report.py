@@ -5,6 +5,8 @@ import csv
 import sys
 
 def read_portfolio(filename):
+    if filename == None:
+        filename = 'Data/portfolio.csv'
     plist = []
     f = open(filename)
     rows = csv.reader(f)
@@ -26,7 +28,7 @@ def read_portfolio(filename):
 
 def read_prices(filename):
     pdict = {}
-    f = open(filename);
+    f = open(filename)
     rows = csv.reader(f)
     for row in rows:
         try:
@@ -38,13 +40,7 @@ def read_prices(filename):
     return pdict
 
 def make_report(portfolio, prices):
-    headers = ('Name', 'Shares', 'Price', 'Change')
-    print('%10s %10s %10s %10s' % headers)
-    print(('_' * 10 + ' ') * len(headers))
     report = [(el['name'], int(el['shares']), float(prices[el['name']]), (int(el['shares']) * float(el['price'])) - (int(el['shares']) * float(prices[el['name']]))) for el in portfolio]
-    for name, shares, price, change in report:
-        price = f"${price:0.2f}"
-        print(f'{name:>10s} {shares:>10d} {price:>10s} {change:>10.2f}')
     return report
 
 def get_portfolio_value():
@@ -64,12 +60,25 @@ def get_portfolio_value():
     else:
         print(f"Portfolio valued at ${new_val:,.2f} for a loss of -${abs(new_val - pval):,.2f}")
 
+def print_report(report):
+    headers = ('Name', 'Shares', 'Price', 'Change')
+    print('%10s %10s %10s %10s' % headers)
+    print(('_' * 10 + ' ') * len(headers))
+    for name, shares, price, change in report:
+        price = f"${price:0.2f}"
+        print(f'{name:>10s} {shares:>10d} {price:>10s} {change:>10.2f}')
+    # for row in report:
+    #     print('%10s %10d %10.2f %10.2f' % row)
 
-if len(sys.argv) == 2:
-    filename = sys.argv[1]
-else:
-    filename = 'Data/portfolio.csv'
+# if len(sys.argv) == 2:
+#     filename = sys.argv[1]
+# else:
+#     filename = 'Data/portfolio.csv'
+def portfolio_report(portfolio_filename, prices_filename):
+    portfolio = read_portfolio(portfolio_filename)
+    prices = read_prices(prices_filename)
+    report = make_report(portfolio, prices)
+    print_report(report)
 
-portfolio = read_portfolio(filename)
-prices = read_prices('Data/prices.csv')
-report = make_report(portfolio, prices)
+
+portfolio_report('Data/portfolio.csv', 'Data/prices.csv')
