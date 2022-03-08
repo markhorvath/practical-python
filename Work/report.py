@@ -3,41 +3,44 @@
 # Exercise 2.4
 import csv
 import sys
+from fileparse import parse_csv
 
 def read_portfolio(filename):
     if filename == None:
         filename = 'Data/portfolio.csv'
-    plist = []
-    f = open(filename)
-    rows = csv.reader(f)
-    headers = next(rows)
-    for i, row in enumerate(rows):
-        record = dict(zip(headers, row))
-        stock = {
-            'name'   : record['name'],
-            'shares' : int(record['shares']),
-            'price'   : float(record['price'])
-        }
-        try:
-            plist.append(stock)
-        except Exception as e:
-            print(f"Error in line {i}")
-    f.close()
-    print(plist)
+    plist = parse_csv(filename, select=['name','shares','price'], types=[str,int,float])
+    
+    # plist = []
+    # f = open(filename)
+    # rows = csv.reader(f)
+    # headers = next(rows)
+    # for i, row in enumerate(rows):
+    #     record = dict(zip(headers, row))
+    #     stock = {
+    #         'name'   : record['name'],
+    #         'shares' : int(record['shares']),
+    #         'price'   : float(record['price'])
+    #     }
+    #     try:
+    #         plist.append(stock)
+    #     except Exception as e:
+    #         print(f"Error in line {i}")
+    # f.close()
     return plist
 
 def read_prices(filename):
-    pdict = {}
-    f = open(filename)
-    rows = csv.reader(f)
-    for row in rows:
-        try:
-            pdict[row[0]] = float(row[1])
-        except Exception as e:
-            print(e)
-            continue
-    f.close()
-    return pdict
+    # pdict = {}
+    return dict(parse_csv(filename, types=[str, float], has_headers=False))
+    # f = open(filename)
+    # rows = csv.reader(f)
+    # for row in rows:
+    #     try:
+    #         pdict[row[0]] = float(row[1])
+    #     except Exception as e:
+    #         print(e)
+    #         continue
+    # f.close()
+    # return pdict
 
 def make_report(portfolio, prices):
     report = [(el['name'], int(el['shares']), float(prices[el['name']]), (int(el['shares']) * float(el['price'])) - (int(el['shares']) * float(prices[el['name']]))) for el in portfolio]
