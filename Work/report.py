@@ -5,6 +5,7 @@ import csv
 import sys
 from fileparse import parse_csv
 from stock import Stock
+import tableformat
 
 def read_portfolio(filename):
     if filename == None:
@@ -69,30 +70,37 @@ def get_portfolio_value():
     else:
         print(f"Portfolio valued at ${new_val:,.2f} for a loss of -${abs(new_val - pval):,.2f}")
 
-def print_report(report):
-    headers = ('Name', 'Shares', 'Price', 'Change')
-    print('%10s %10s %10s %10s' % headers)
-    print(('_' * 10 + ' ') * len(headers))
-    for name, shares, price, change in report:
-        price = f"${price:0.2f}"
-        print(f'{name:>10s} {shares:>10d} {price:>10s} {change:>10.2f}')
-    # for row in report:
-    #     print('%10s %10d %10.2f %10.2f' % row)
+def print_report(reportdata, formatter):
+    # headers = ('Name', 'Shares', 'Price', 'Change')
+    # print('%10s %10s %10s %10s' % headers)
+    # print(('_' * 10 + ' ') * len(headers))
+    # for name, shares, price, change in report:
+    #     price = f"${price:0.2f}"
+    #     print(f'{name:>10s} {shares:>10d} {price:>10s} {change:>10.2f}')
+    formatter.headings(['Name','Shares','Price','Change'])
+    for name, shares, price, change in reportdata:
+        rowdata = [ name, str(shares), f'{price:0.2f}', f'{change:0.2f}' ]
+        formatter.row(rowdata)
 
-# if len(sys.argv) == 2:
-#     filename = sys.argv[1]
-# else:
-#     filename = 'Data/portfolio.csv'
-def portfolio_report(portfolio_filename, prices_filename):
-    portfolio = read_portfolio(portfolio_filename)
-    prices = read_prices(prices_filename)
+def portfolio_report(portfoliofile, pricefile, fmt='txt'):
+    '''
+    Make a stock report given portfolio and price data files.
+    '''
+    # Read data files
+    portfolio = read_portfolio(portfoliofile)
+    prices = read_prices(pricefile)
+
+    # Create the report data
     report = make_report(portfolio, prices)
-    print_report(report)
+
+    # Print it out
+    formatter = tableformat.create_formatter(fmt)
+    print_report(report, formatter)
 
 def main(args):
-    if len(args) != 3:
+    if len(args) != 4:
         raise SystemExit('Usage: %s portfile pricefile' % args[0])
-    portfolio_report(args[1], args[2])
+    portfolio_report(args[1], args[2], args[3])
 
 if __name__ == '__main__':
     import sys
