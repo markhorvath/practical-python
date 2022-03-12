@@ -9,7 +9,7 @@ from report import read_portfolio
 def portfolio_cost(filename):
     portfolio = read_portfolio(filename)
     cost = sum([s['shares']*s['price'] for s in portfolio])
-    print(cost)
+    print(f"Total cost: ${cost:,.2f}.")
     return cost
     # f = open(filename)
     # rows = csv.reader(f)
@@ -35,6 +35,15 @@ if len(sys.argv) == 2:
 else:
     filename = 'Data/portfolio.csv'
 
-cost = portfolio_cost(filename)
+# cost = portfolio_cost(filename)
 # print(type(cost))
 # print(f"Total cost: ${cost[0]:,.2f}.")
+
+def main(args):
+    if len(args) != 2:
+        raise SystemExit('Usage: %s portfile' % args[0])
+    portfolio_cost(args[1])
+
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
