@@ -4,11 +4,12 @@
 import csv
 import sys
 from report import read_portfolio
+from stock import Stock
 
 
 def portfolio_cost(filename):
     portfolio = read_portfolio(filename)
-    cost = sum([s['shares']*s['price'] for s in portfolio])
+    cost = sum([s.cost() for s in portfolio])
     print(f"Total cost: ${cost:,.2f}.")
     return cost
     # f = open(filename)

@@ -4,12 +4,14 @@
 import csv
 import sys
 from fileparse import parse_csv
+from stock import Stock
 
 def read_portfolio(filename):
     if filename == None:
         filename = 'Data/portfolio.csv'
     with open(filename) as lines:
-        plist = parse_csv(lines, select=['name','shares','price'], types=[str,int,float])
+        portdicts = parse_csv(lines, select=['name','shares','price'], types=[str,int,float])
+        plist = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts]
     
     # plist = []
     # f = open(filename)
@@ -45,18 +47,20 @@ def read_prices(filename):
     # return pdict
 
 def make_report(portfolio, prices):
-    report = [(el['name'], int(el['shares']), float(prices[el['name']]), (int(el['shares']) * float(el['price'])) - (int(el['shares']) * float(prices[el['name']]))) for el in portfolio]
+    for s in portfolio:
+        print((prices[s.name] * s.shares) - (s.price * s.shares) / (s.price * s.shares))
+    report = [(s.name, int(s.shares), float(s.price), (s.cost()) - (int(s.shares) * float(prices[s.name]))) for s in portfolio]
     return report
 
 def get_portfolio_value():
     portfolio = read_portfolio(filename)
     prices = read_prices('Data/prices.csv')
     pval = 0.0
-    for el in portfolio:
-        pval += el['shares'] * el['price']
+    for s in portfolio:
+        pval += s.cost()
     new_val = 0.0
-    for el in portfolio:
-        new_val += el['shares'] * prices[el['name']]
+    for s in portfolio:
+        new_val += s.shares * prices[s.name]
 
     if new_val > pval:
         print(f"Portfolio valued at ${new_val:,.2f} for a gain of ${(new_val - pval):,.2f}")

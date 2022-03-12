@@ -37,7 +37,6 @@ def parse_csv(data, select=None, types=None, has_headers=True, delimiter=',', si
         indices = []
     records = []
     for i, row in enumerate(rows):
-        print(rows)
         try:
             if not row:    # Skip rows with no data
                 continue
