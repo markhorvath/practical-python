@@ -6,31 +6,27 @@ import sys
 from fileparse import parse_csv
 from stock import Stock
 import tableformat
+from portfolio import Portfolio
 
 def read_portfolio(filename):
-    if filename == None:
-        filename = 'Data/portfolio.csv'
-    with open(filename) as lines:
-        portdicts = parse_csv(lines, select=['name','shares','price'], types=[str,int,float])
-        plist = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts]
+    '''
+    Read a stock portfolio file into a list of dictionaries with keys
+    name, shares, and price.
+    '''
+    with open(filename) as file:
+        portdicts = parse_csv(file, select=['name','shares','price'], types=[str,int,float])
+
+    portfolio = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts ]
+    return Portfolio(portfolio)
+
+# def read_portfolio(filename):
+#     if filename == None:
+#         filename = 'Data/portfolio.csv'
+#     with open(filename) as lines:
+#         portdicts = parse_csv(lines, select=['name','shares','price'], types=[str,int,float])
+#         plist = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts]
     
-    # plist = []
-    # f = open(filename)
-    # rows = csv.reader(f)
-    # headers = next(rows)
-    # for i, row in enumerate(rows):
-    #     record = dict(zip(headers, row))
-    #     stock = {
-    #         'name'   : record['name'],
-    #         'shares' : int(record['shares']),
-    #         'price'   : float(record['price'])
-    #     }
-    #     try:
-    #         plist.append(stock)
-    #     except Exception as e:
-    #         print(f"Error in line {i}")
-    # f.close()
-    return plist
+#     return plist
 
 def read_prices(filename):
     # pdict = {}
@@ -48,9 +44,14 @@ def read_prices(filename):
     # return pdict
 
 def make_report(portfolio, prices):
-    for s in portfolio:
-        print((prices[s.name] * s.shares) - (s.price * s.shares) / (s.price * s.shares))
-    report = [(s.name, int(s.shares), float(s.price), (s.cost()) - (int(s.shares) * float(prices[s.name]))) for s in portfolio]
+    # rows = []
+    # for s in portfolio:
+    #     current_price = prices[s.name]
+    #     change = current_price - s.price
+    #     summary = (s.name, s.shares, current_price, change)
+    #     rows.append(summary)
+    # return rows
+    report = [(s.name, s.shares, prices[s.name], s.price - prices[s.name]) for s in portfolio]
     return report
 
 def get_portfolio_value():

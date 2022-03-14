@@ -14,7 +14,7 @@ class Stock:
     @shares.setter
     def shares(self, value):
         if not isinstance(value, int):
-            raise TypeError('Expected int')
+            raise TypeError('Expected an integer')
         self._shares = value
     
     def __repr__(self):
