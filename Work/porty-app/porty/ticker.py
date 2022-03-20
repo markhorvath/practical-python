@@ -1,9 +1,9 @@
 # ticker.py
 
-from follow import follow
 import csv
-import report
-import tableformat
+from .follow import follow
+from . import report
+from . import tableformat
 
 
 def convert_types(rows, types):

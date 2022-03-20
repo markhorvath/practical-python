@@ -3,8 +3,9 @@
 # Exercise 1.27
 import csv
 import sys
-import report
-from stock import Stock
+from . import report
+from . import stock
+from .stock import Stock
 
 
 def portfolio_cost(filename):

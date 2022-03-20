@@ -3,10 +3,11 @@
 # Exercise 2.4
 import csv
 import sys
-from fileparse import parse_csv
-from stock import Stock
-import tableformat
-from portfolio import Portfolio
+from .stock import Stock
+from . import tableformat
+from .portfolio import Portfolio
+from .fileparse import parse_csv
+
 
 def read_portfolio(filename, **opts):
     '''
